@@ -3,48 +3,47 @@ import CountryCard from "./countryCard/countryCard";
 import "./App.css";
 
 const App = () => {
-  const [countries, setCountries] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [data, setData] = useState([]); // Correct naming convention for state
+  const [searchTerm, setSearchTerm] = useState(""); // For search input
+
+  // Update the search term state
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  // Filter countries based on the search term
+  const filteredCountries = data.filter((country) =>
+    country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
-    // Fetch country data from API
     const fetchCountries = async () => {
       try {
-        const response = await fetch("https://restcountries.com/v3.1/all");
-        if (!response.ok) throw new Error("Network response was not ok.");
-        const data = await response.json();
-        setCountries(data);
-      } catch (error) {
-        console.error("Fetch error:", error);
+        const apiData = await fetch("https://restcountries.com/v3.1/all");
+        const actualData = await apiData.json();
+        setData(actualData); // Set the data state with fetched data
+      } catch (err) {
+        console.error("Failed to fetch the data:", err);
       }
     };
 
     fetchCountries();
   }, []);
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value.toLowerCase());
-  };
-
-  const filteredCountries = countries.filter((country) =>
-    country.name.common.toLowerCase().includes(searchTerm)
-  );
-
   return (
     <div className="App">
       <input
         type="text"
-        placeholder="Search for a country..."
+        placeholder="Search for countries..."
+        className="search-bar"
         value={searchTerm}
         onChange={handleSearch}
-        className="searchBar"
       />
-      <div className="countryContainer">
+      <div className="countries-container">
         {filteredCountries.map((country) => (
           <CountryCard
-            key={country.cca3}
-            name={country.name.common}
-            flag={country.flags.png}
+            key={country.cca3 || country.name.common}
+            country={country}
           />
         ))}
       </div>
