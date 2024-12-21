@@ -1,19 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import CountryCard from './countryCard/countryCard';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import CountryCard from "./countryCard/countryCard";
+import "./App.css";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true); // New loading state
+  const [error, setError] = useState(null); // Error state for better debugging
 
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await fetch('https://restcountries.com/v3.1/all');
+        const response = await fetch("https://restcountries.com/v3.1/all");
+        if (!response.ok)
+          throw new Error(`HTTP error! Status: ${response.status}`);
         const data = await response.json();
         setCountries(data);
-      } catch (error) {
-        console.error('Error fetching countries:', error);
+      } catch (err) {
+        console.error("Error fetching countries:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false); // Ensure loading stops regardless of success or failure
       }
     };
 
@@ -24,7 +31,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredCountries = countries.filter(country =>
+  const filteredCountries = countries.filter((country) =>
     country.name.common.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -37,11 +44,17 @@ const App = () => {
         value={searchTerm}
         onChange={handleSearch}
       />
-      <div className="countries-container">
-        {filteredCountries.map((country) => (
-          <CountryCard key={country.cca3} country={country} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="loading">Loading...</div>
+      ) : error ? (
+        <div className="error">Error: {error}</div>
+      ) : (
+        <div className="countries-container">
+          {filteredCountries.map((country) => (
+            <CountryCard key={country.cca3} country={country} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
