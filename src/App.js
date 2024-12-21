@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import CountryCard from "./countryCard/countryCard";
+import CountryCard from "./countryCard";
 import "./App.css";
 
 const App = () => {
@@ -17,7 +17,11 @@ const App = () => {
     const fetchCountries = async () => {
       try {
         const apiData = await fetch("https://restcountries.com/v3.1/all");
+        if (!apiData.ok) {
+          throw new Error("Network response was not ok");
+        }
         const actualData = await apiData.json();
+
         setData(actualData);
       } catch (err) {
         console.error("Failed to fetch the data:", err);
