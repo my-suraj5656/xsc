@@ -43,8 +43,9 @@ const App = () => {
       <div className="countries-container">
         {filteredCountries.map((country) => (
           <CountryCard
-            key={country.cca3 || country.name.common}
-            country={country}
+            key={country.cca3}
+            name={country.name.common}
+            flag={country.flags.png}
           />
         ))}
       </div>

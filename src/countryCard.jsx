@@ -1,15 +1,11 @@
 import React from "react";
 import "./countryCard.css";
 
-const countryCard = ({ country }) => {
+const countryCard = ({ name, flag }) => {
   return (
     <div className="countryCard">
-      <img
-        src={country.flags.png}
-        alt={`Flag of ${country.name.common}`}
-        className="countryCard-flag"
-      />
-      <h3 className="countryCard-name">{country.name.common}</h3>
+      <img src={flag} alt={`Flag of ${name}`} className="countryCard-flag" />
+      <p>{name}</p>
     </div>
   );
 };
